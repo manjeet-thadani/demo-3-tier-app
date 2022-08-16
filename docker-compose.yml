@@ -1,0 +1,46 @@
+
+version: "3.1"
+
+volumes:
+  redis-data:
+  mongo-data:
+
+services:
+  backend:
+    image: backend:latest
+    build: ./backend
+    container_name: backend
+    command: npm run start
+    env_file: 
+      - .env
+    ports:
+      - "0.0.0.0:3001:3000"
+    depends_on:
+      - mongo
+      - redis
+    volumes:
+      - /app/node_modules
+      - ./backend:/app/
+    restart: always
+  
+  redis:
+    image: redis:6.0
+    container_name: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    restart: always
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      MONGO_INITDB_DATABASE: demo
+      MONGO_INITDB_ROOT_PASSWORD: demo
+      MONGO_INITDB_ROOT_USERNAME: demo
+    ports:
+      - "0.0.0.0:27017:27017"
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+      - ./setup/mongodb-init.js:/docker-entrypoint-initdb.d/001_init.js

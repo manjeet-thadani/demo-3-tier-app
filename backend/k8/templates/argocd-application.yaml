@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.argo_namespace }}
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.repo_url }}
+    targetRevision: HEAD
+    path: application/backend/k8/
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Values.namespace }}

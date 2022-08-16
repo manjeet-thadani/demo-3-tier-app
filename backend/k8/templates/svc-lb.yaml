@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.name }}-lb
+  labels:
+    {{- include "demo-backend.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ .Values.name }}
+  ports:
+    - port: 80
+      targetPort: {{ .Values.port }}
+  type: LoadBalancer
+  
